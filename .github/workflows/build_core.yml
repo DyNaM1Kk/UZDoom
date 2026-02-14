@@ -181,13 +181,16 @@ jobs:
       if: github.ref == 'refs/heads/trunk' && inputs.build_type == 'Release'
       shell: bash
       run: |
-        packagename="${{ runner.os }}-${{ runner.arch }}"-UZDoom-"${{ steps.ghd.outputs.describe }}"
         newname="${{ runner.os }}-UZDoom-Nightly"
+        if [[ ${{ inputs.name }} == 'Linux GCC' ]]; then
+            newname="${{ runner.os }}-Legacy-UZDoom-Nightly"
+        fi
+        
         cd build/package
         if [[ "${{ runner.os }}" == 'Windows' || "${{ runner.os }}" == 'macOS' ]]; then
-            mv "${packagename}.zip" "${newname}.zip"
+            mv *.zip "${newname}.zip"
         elif [[ "${{ runner.os }}" == 'Linux' ]]; then
-            mv "${packagename}.AppImage" "${newname}.AppImage"
+            mv *.AppImage "${newname}.AppImage"
         fi
 
     - name: Upload Nightly
