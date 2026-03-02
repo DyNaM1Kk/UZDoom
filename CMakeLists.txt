@@ -264,6 +264,21 @@ if (NOT FORCE_INTERNAL_ZMUSIC)
 	find_package( ZMusic )
 endif()
 
+find_package( CURL )
+if( MSVC AND NOT CURL_FOUND )
+	# Use prebuilt library
+	if ( ARM64 )
+		set( CURL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/windows/curl/arm64" )
+	else()
+		set( CURL_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/windows/curl/x64" )
+	endif()
+
+	set( CURL_INCLUDE_DIR ${CURL_ROOT_PATH}/include )
+	set( CURL_LIBRARY ${CURL_ROOT_PATH}/lib/libcurl.lib )
+
+	set( CURL_FOUND TRUE )
+endif()
+
 include( TargetArch )
 
 target_architecture(TARGET_ARCHITECTURE)
@@ -490,6 +505,7 @@ install(DIRECTORY docs/
 option( DYN_OPENAL "Dynamically load OpenAL" ON )
 option( BUILD_NONFREE "Build non-free assets used by commercial games" ON )
 
+add_subdirectory( updater )
 add_subdirectory( src )
 add_subdirectory( libraries/lzma )
 add_subdirectory( tools )

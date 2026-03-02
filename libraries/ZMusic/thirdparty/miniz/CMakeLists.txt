@@ -5,5 +5,5 @@ if (MSVC)
 endif()
 
 add_library( miniz OBJECT miniz.c )
-target_compile_definitions( miniz PRIVATE -DMINIZ_NO_STDIO )
+target_compile_definitions( miniz PRIVATE )
 target_include_directories( miniz INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>" )

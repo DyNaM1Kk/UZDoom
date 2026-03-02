@@ -380,6 +380,14 @@ else()
 	message( SEND_ERROR "Could not find cppdap" )
 endif()
 
+if ( CURL_FOUND )
+	include_directories( SYSTEM "${CURL_INCLUDE_DIR}" )
+	set( PROJECT_LIBRARIES ${PROJECT_LIBRARIES} "${CURL_LIBRARY}" )
+	if( MSVC )
+		list( APPEND PROJECT_LIBRARIES ${CURL_ROOT_PATH}/lib/zlib.lib )
+	endif()
+endif()
+
 # Start defining source files for ZDoom
 set( PLAT_WIN32_SOURCES
 	win32/i_steam.cpp
@@ -969,6 +977,7 @@ set (PCH_SOURCES
 	widgets/launcherbanner.cpp
 	widgets/launcherbuttonbar.cpp
 	widgets/launcherwindow.cpp
+	widgets/updatebuttonbar.cpp
 	widgets/netstartwindow.cpp
 	widgets/networkpage.cpp
 	widgets/playgamepage.cpp
@@ -1276,7 +1285,7 @@ list( REMOVE_ITEM GAME_NONPCH_SOURCES ${PCH_SOURCES} )
 
 add_executable( zdoom WIN32 MACOSX_BUNDLE ${GAME_SOURCES} )
 
-target_include_directories( zdoom PRIVATE ${CMAKE_BINARY_DIR} )
+target_include_directories( zdoom PRIVATE ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/updater )
 
 target_precompile_headers( zdoom PRIVATE g_pch.h )
 
@@ -1316,7 +1325,7 @@ if( UNIX )
 	endif()
 endif()
 
-target_link_libraries( zdoom ${PROJECT_LIBRARIES} lzma ${ZMUSIC_LIBRARIES} )
+target_link_libraries( zdoom ${PROJECT_LIBRARIES} updater_core lzma ${ZMUSIC_LIBRARIES} )
 include_directories(
 	BEFORE
 	.
